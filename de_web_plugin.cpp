@@ -4364,10 +4364,8 @@ void DeRestPluginPrivate::addSensorNode(const deCONZ::Node *node, const deCONZ::
         {
             QByteArray ba = modelId.toLocal8Bit();
             const char *mid = ba.data();
-            QByteArray ba1 = node->nodeDescriptor().manufacturerCode().toLocal8Bit();
-            const char *manu = ba1.data();
             DBG_Printf(DBG_INFO, "[444] Model ID: %s\n", mid);
-            DBG_Printf(DBG_INFO, "[444] Manufacturer: %s\n", manu);
+            DBG_Printf(DBG_INFO, "[444] mfcode: 0x%04X \n", node->nodeDescriptor().manufacturerCode());
             DBG_Printf(DBG_INFO, "[555] Device not supported\n");
 
             
