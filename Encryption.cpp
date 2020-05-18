@@ -12,6 +12,9 @@
 #define AES_KEYLENGTH 128
 #define AES_BLOCK_SIZE 16
 
+const unsigned char zigBeeLinkKey[] = { 0x5A, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6C, 0x6C, 0x69, 0x61, 0x6E, 0x63, 0x65, 0x30, 0x39 };
+
+
 // a simple hex-print routine. could be modified to print 16 bytes-per-line
 static void hex_print(const void* pv, size_t len)
 {
@@ -66,7 +69,7 @@ unsigned char * encryptSecurityKey(int sourceID, unsigned char *securityKey) {
 	EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_IVLEN, sizeof(nonce), NULL);
 
 	/* Initialise key and IV */
-	EVP_EncryptInit_ex(ctx, NULL, NULL, securityKey, nonce);
+	EVP_EncryptInit_ex(ctx, NULL, NULL, zigBeeLinkKey, nonce);
 
 	/* Encrypt plaintext: can only be called once */
 	EVP_EncryptUpdate(ctx, EncryptedKey, &outlen, securityKey, (int)inputslength);
