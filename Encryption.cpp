@@ -30,7 +30,7 @@ static void hex_print(const void* pv, size_t len)
 	printf("\n");
 }
 
-
+// From https://github.com/Koenkk/zigbee-herdsman/blob/master/src/controller/greenPower.ts
 unsigned char * encryptSecurityKey(int sourceID, unsigned char *securityKey) {
 
 	unsigned char nonce[13];
