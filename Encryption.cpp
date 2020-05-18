@@ -65,9 +65,6 @@ unsigned char * encryptSecurityKey(int sourceID, unsigned char *securityKey) {
 	/* Set nonce length if default 96 bits is not appropriate */
 	EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_IVLEN, sizeof(nonce), NULL);
 
-	//  /* Set tag length */
-	//  EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, sizeof(ccm_tag), NULL);
-
 	/* Initialise key and IV */
 	EVP_EncryptInit_ex(ctx, NULL, NULL, securityKey, nonce);
 
@@ -87,10 +84,10 @@ int main()
 
 	//from deconz
 	unsigned char key[] = "ZTk0YTU011111111";
-	int sourceID = 0x12345678;
+	int gpdSrcId = 0x12345678;
 
 	//Fonction to get key encrypted
-	unsigned char* EncryptedKey = encryptSecurityKey(sourceID, key);
+	unsigned char* EncryptedKey = encryptSecurityKey(gpdSrcId, key);
 
 	printf("encrypt:\t");
 	hex_print(EncryptedKey, strlen((const char*)EncryptedKey));
