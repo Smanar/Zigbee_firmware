@@ -11,7 +11,7 @@ from struct import pack,unpack
 #newFile = open("ikea.zigbee", "rb")
 #newFile = open("osram.ota", "rb")
 #newFile = open("hue.ota", "rb")
-newFile = open("NLT-33.fw", "rb")
+newFile = open("NLF-43.ota", "rb")
 
 #Read file
 file = newFile.read()
@@ -21,7 +21,7 @@ dec = -1
 for i in range(len(file)-4):
     if hex(unpack('<I',file[0+i:4+i])[0]) == '0xbeef11e':
         dec = i
-        print ("\nfind offset : " + str(i) )
+        print ("\nfind start offset : " + str(i) )
         break
         
 if dec == -1:
@@ -76,8 +76,8 @@ else:
 #    print (str(i) + ' > ' + hex(unpack('<H',file[i+dec:i+dec+2])[0]) )
 
 offset = Header_len + dec
-print ('\n***** DATA *****')
-while offset < Image_sizeT + dec:
+print ('\n***** DATA ***** (Start at offset ' + str(offset) + ')\n')
+while offset < Image_sizeT + dec - 6:
 
     Tag_ID = unpack('<H',file[offset:offset+2])[0]
     Tag_desc = ''
@@ -103,6 +103,10 @@ while offset < Image_sizeT + dec:
         print (file[offset + 6:offset + 106] )
     
     #print ("Data : " + hex(unpack('<I',file[offset+6:offset+field_len+6])[0]) )
+    
+    print("segment offset " + str(offset) + ">" + str(offset + 6 + field_len))
+    print("Remain " + str(Image_sizeT + dec - (offset + 6 + field_len)))
+    
     offset += field_len + 6
     
 #Check if all data have been read
