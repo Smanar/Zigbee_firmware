@@ -12,16 +12,20 @@ from struct import pack,unpack
 #newFile = open("osram.ota", "rb")
 #newFile = open("hue.ota", "rb")
 newFile = open("NLF-43.ota", "rb")
+#newFile = open("NLC-11.fw", "rb")
 
 #Read file
 file = newFile.read()
+TotalFileSize = len(file)
+
+print ("File size : " + str(TotalFileSize) + '\n')
 
 dec = -1
 #Search first usable header
 for i in range(len(file)-4):
     if hex(unpack('<I',file[0+i:4+i])[0]) == '0xbeef11e':
         dec = i
-        print ("\nfind start offset : " + str(i) )
+        print ("find start offset : " + str(i) )
         break
         
 if dec == -1:
@@ -75,9 +79,12 @@ else:
 #for i in range(80):
 #    print (str(i) + ' > ' + hex(unpack('<H',file[i+dec:i+dec+2])[0]) )
 
-offset = Header_len + dec
+StartingOffsetImage = Header_len + dec
+
+offset = StartingOffsetImage
+
 print ('\n***** DATA ***** (Start at offset ' + str(offset) + ')\n')
-while offset < Image_sizeT + dec - 6:
+while offset < TotalFileSize :
 
     Tag_ID = unpack('<H',file[offset:offset+2])[0]
     Tag_desc = ''
@@ -93,27 +100,35 @@ while offset < Image_sizeT + dec - 6:
         Tag_desc = 'Reserved'
     else:
         Tag_desc = 'Reserved'
+
     print ("Tag ID : " + hex(Tag_ID) + ' ' + Tag_desc)
     
     field_len = unpack('<I',file[offset+2:offset+6])[0]
+    
+    if (offset + field_len) >= (Image_sizeT + StartingOffsetImage):
+        field_len = TotalFileSize - offset
+        print ("*** Recalculating lenght " )
+        
+    
     print ("len field : " + str(field_len) )
     
-    if Tag_ID == 0:
-        print ("\nFirst data Upgrade image")
-        print (file[offset + 6:offset + 106] )
+    #if Tag_ID == 0:
+    #    print ("\nFirst data Upgrade image")
+    #    print (file[offset + 6:offset + 106] )
     
     #print ("Data : " + hex(unpack('<I',file[offset+6:offset+field_len+6])[0]) )
     
-    print("segment offset " + str(offset) + ">" + str(offset + 6 + field_len))
-    print("Remain " + str(Image_sizeT + dec - (offset + 6 + field_len)))
+    print("segment offset " + str(offset) + ">" + str(offset + 6 + field_len) + '\n')
     
     offset += field_len + 6
     
 #Check if all data have been read
 print ('\n**** END ********')
-if Image_sizeT + dec - offset != 0:
-    print ('Missing data : ' + str(Image_sizeT + dec - offset))
-else:
-    print ('All data parsed')
+print ('Unused data : ' + str(TotalFileSize - offset + 6))
+
+#if Image_sizeT + dec - offset != 0:
+#    print ('Missing data : ' + str(Image_sizeT + dec - offset))
+#else:
+#    print ('All data parsed')
 
 newFile.close()
