@@ -18,7 +18,7 @@ newFile = open("NLF-43.ota", "rb")
 file = newFile.read()
 TotalFileSize = len(file)
 
-print ("File size : " + str(TotalFileSize) + '\n')
+print ("File size : " + str(TotalFileSize) )
 
 dec = -1
 #Search first usable header
@@ -106,11 +106,13 @@ while offset < TotalFileSize :
     field_len = unpack('<I',file[offset+2:offset+6])[0]
     
     if (offset + field_len) >= (Image_sizeT + StartingOffsetImage):
-        field_len = TotalFileSize - offset
-        print ("*** Recalculating lenght " )
-        
+        print ("*** Recalculating lenght, value too big = " + str(field_len) )
+        field_len = TotalFileSize - offset - 6
     
     print ("len field : " + str(field_len) )
+    
+    OffsetS = offset
+    OffsetE = offset + 6 + field_len
     
     #if Tag_ID == 0:
     #    print ("\nFirst data Upgrade image")
@@ -118,13 +120,13 @@ while offset < TotalFileSize :
     
     #print ("Data : " + hex(unpack('<I',file[offset+6:offset+field_len+6])[0]) )
     
-    print("segment offset " + str(offset) + ">" + str(offset + 6 + field_len) + '\n')
+    print("segment offset " + str(OffsetS) + ">" + str(OffsetE) + '\n')
     
-    offset += field_len + 6
+    offset = OffsetE + 1
     
 #Check if all data have been read
 print ('\n**** END ********')
-print ('Unused data : ' + str(TotalFileSize - offset + 6))
+print ('Unused data : ' + str(TotalFileSize - offset + 1))
 
 #if Image_sizeT + dec - offset != 0:
 #    print ('Missing data : ' + str(Image_sizeT + dec - offset))
