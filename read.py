@@ -21,7 +21,7 @@ file = newFile.read()
 TotalFileSize = len(file)
 
 print ("File name : " + f)
-print ("File size : " + str(TotalFileSize) )
+print ("File size : " + str(TotalFileSize) + " Bytes" )
 
 dec = -1
 Search = 0
@@ -89,6 +89,7 @@ StartingOffsetImage = Header_len + dec
 
 offset = StartingOffsetImage
 DataGet = Header_len
+Segment = 1
 
 print ('\n***** DATA ***** (Start at offset ' + str(offset) + ')\n')
 while offset < TotalFileSize :
@@ -108,15 +109,18 @@ while offset < TotalFileSize :
     else:
         Tag_desc = 'Reserved'
 
+    print ("Segment " + str(Segment) )
+    print ("-------------")
+    Segment += 1
     print ("Tag ID : " + hex(Tag_ID) + ' ' + Tag_desc)
     
     field_len = unpack('<I',file[offset+2:offset+6])[0]
     
     if (offset + field_len) >= (Image_sizeT + StartingOffsetImage):
-        print ("*** Recalculating lenght, value too big = " + str(field_len) )
+        print ("*** Recalculating lenght, value in TAG too big = " + str(field_len) )
         field_len = TotalFileSize - offset - 6
-
-    print ("len field : " + str(field_len) )
+    else:
+        print ("len field : " + str(field_len) + " bytes" )
     
     DataGet += field_len + 6
     
@@ -129,8 +133,11 @@ while offset < TotalFileSize :
     
     #print ("Data : " + hex(unpack('<I',file[offset+6:offset+field_len+6])[0]) )
     
-    print("segment offset " + str(OffsetS) + ">" + str(OffsetE) + '\n')
-    print("Image percentage " + str( (DataGet * 100)/Image_sizeT ) + '%\n')
+    print("segment offset " + str(OffsetS) + ">" + str(OffsetE) + ' (' + str(OffsetE - OffsetS +1) + ' bytes)')
+    if DataGet <= Image_sizeT :
+        print("Image percentage " + str( (DataGet * 100)/Image_sizeT ) + '%')
+        if DataGet == Image_sizeT:
+            print("\n*** IMAGE COMPLETE ***\n")
     
     offset = OffsetE + 1
     
