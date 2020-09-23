@@ -8,25 +8,31 @@
 from struct import pack,unpack
 
 #Open file
-#newFile = open("ikea.zigbee", "rb")
-#newFile = open("osram.ota", "rb")
-#newFile = open("hue.ota", "rb")
-newFile = open("NLF-43.ota", "rb")
-#newFile = open("NLC-11.fw", "rb")
+#f = "ikea.zigbee"
+#f = "osram.ota"
+#f = "hue.ota"
+f = "NLF-43.ota"
+#f = "NLC-11.fw"
+#f = "philipsmultiplesegment.zigbee"
 
 #Read file
+newFile = open(f, "rb")
 file = newFile.read()
 TotalFileSize = len(file)
 
+print ("File name : " + f)
 print ("File size : " + str(TotalFileSize) )
 
 dec = -1
+Search = 0
 #Search first usable header
 for i in range(len(file)-4):
     if hex(unpack('<I',file[0+i:4+i])[0]) == '0xbeef11e':
-        dec = i
-        print ("find start offset : " + str(i) )
-        break
+        Search += 1
+        if Search == 1:
+            dec = i
+            print ("find start offset : " + str(i) )
+            break
         
 if dec == -1:
     print ('Bad file format')
@@ -82,6 +88,7 @@ else:
 StartingOffsetImage = Header_len + dec
 
 offset = StartingOffsetImage
+DataGet = Header_len
 
 print ('\n***** DATA ***** (Start at offset ' + str(offset) + ')\n')
 while offset < TotalFileSize :
@@ -108,11 +115,13 @@ while offset < TotalFileSize :
     if (offset + field_len) >= (Image_sizeT + StartingOffsetImage):
         print ("*** Recalculating lenght, value too big = " + str(field_len) )
         field_len = TotalFileSize - offset - 6
-    
+
     print ("len field : " + str(field_len) )
     
+    DataGet += field_len + 6
+    
     OffsetS = offset
-    OffsetE = offset + 6 + field_len
+    OffsetE = offset + 6 + field_len  - 1
     
     #if Tag_ID == 0:
     #    print ("\nFirst data Upgrade image")
@@ -121,16 +130,12 @@ while offset < TotalFileSize :
     #print ("Data : " + hex(unpack('<I',file[offset+6:offset+field_len+6])[0]) )
     
     print("segment offset " + str(OffsetS) + ">" + str(OffsetE) + '\n')
+    print("Image percentage " + str( (DataGet * 100)/Image_sizeT ) + '%\n')
     
     offset = OffsetE + 1
     
 #Check if all data have been read
 print ('\n**** END ********')
-print ('Unused data : ' + str(TotalFileSize - offset + 1))
-
-#if Image_sizeT + dec - offset != 0:
-#    print ('Missing data : ' + str(Image_sizeT + dec - offset))
-#else:
-#    print ('All data parsed')
+print ('Unused data : ' + str(TotalFileSize - offset ))
 
 newFile.close()
