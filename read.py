@@ -62,7 +62,7 @@ print ("Manufacturer code : " + hex(unpack('<H',file[(10+dec):(12+dec)])[0]) )
 
 Image_type = unpack('<H',file[12+dec:14+dec])[0]
 if Image_type < 65472:
-    Image_type_desc = 'Manfufacturer Specific'
+    Image_type_desc = 'Manufacturer Specific'
 elif Image_type == 65472:
     Image_type_desc = 'Client security credential'
 elif Image_type == 65473:
