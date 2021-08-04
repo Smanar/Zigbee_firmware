@@ -4,16 +4,24 @@
 # https://docs.python.org/3.5/library/struct.html#struct.pack
 # http://www.zigbee.org/wp-content/uploads/2014/11/docs-09-5264-23-00zi-zigbee-ota-upgrade-cluster-specification.pdf
 
-
+import sys
 from struct import pack,unpack
 
-#Open file
-#f = "ikea.zigbee"
-#f = "osram.ota"
-#f = "hue.ota"
-f = "NLF-43.ota"
-#f = "NLC-11.fw"
-#f = "philipsmultiplesegment.zigbee"
+if (len (sys.argv) > 1):
+    f = sys.argv[1]
+else:
+    #f = "ikea.zigbee"
+    #f = "osram.ota"
+    #f = "hue.ota"
+    #f = "NLF-43.ota"
+    #f = "NLC-11.fw"
+    #f = "philipsmultiplesegment.zigbee"
+    #f = "badikea.ota"
+    #f = "MainRemote_00244203.ota"
+    #f = "Double-Remote_00084203.ota"
+    f = "DimwoNeutral_002E4203.ota"
+    #f= "NLC-11.fw"
+    #f= "Shutter_00224203.ota"
 
 #Read file
 newFile = open(f, "rb")
